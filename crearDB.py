@@ -8,7 +8,7 @@ cursor = conexion.cursor()
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    usurio TEXT,
+    usuario TEXT,
     correo TEXT,
     password TEXT
 );

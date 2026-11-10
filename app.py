@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 import sqlite3
 
 import re
+
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask (__name__)
@@ -36,6 +37,8 @@ def registro():
         conexion = sqlite3.connect("usuarios.db")
         cursor = conexion.cursor()
 
+        password = generate_password_hash(password)
+
         cursor.execute(
             "INSERT INTO usuarios (usuario, correo, password) VALUES (?, ?, ?)",
             (usuario, correo, password)
@@ -63,8 +66,8 @@ def login():
         cursor = conexion.cursor()
 
         cursor.execute(
-            "SELECT * FROM usuarios WHERE usuario=? AND password=?",
-            (usuario, password)
+            "SELECT * FROM usuarios WHERE usuario = ?",
+            (usuario,)
         )
 
         resultado = cursor.fetchone()
@@ -72,7 +75,8 @@ def login():
         conexion.close()
 
         if resultado:
-            return "Inicio de sesión correcto"
+            if check_password_hash(resultado[3], password):
+                return "Inicio de sesión correcto"
         else:
             return "Credenciales incorrectos"
   

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import sqlite3
+from datetime import datetime
 
 import re
 
@@ -51,11 +52,12 @@ def registro():
 
     return render_template("registro.html")
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
     if request.method == "POST":
-        
+
         usuario = request.form["usuario"].strip()
         password = request.form["password"]
 
@@ -71,16 +73,26 @@ def login():
         )
 
         resultado = cursor.fetchone()
-
         conexion.close()
 
-        if resultado:
-            if check_password_hash(resultado[3], password):
-                return "Inicio de sesión correcto"
+        fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        if resultado and check_password_hash(resultado[3], password):
+            evento = f"{fecha},LOGIN_CORRECTO,{usuario}\n"
+            with open("eventos.log", "a", encoding="utf-8") as archivo:
+                archivo.write(evento)
+
+            return "Inicio de sesión correcto"
+
         else:
-            return "Credenciales incorrectos"
-  
+            evento = f"{fecha},LOGIN_FALLIDO,{usuario}\n"
+            with open("eventos.log", "a", encoding="utf-8") as archivo:
+                archivo.write(evento)
+
+            return "Credenciales incorrectas"
+
     return render_template("login.html")
+
 
 if __name__== "__main__":
     app.run(debug=True)

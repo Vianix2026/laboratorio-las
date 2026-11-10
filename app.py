@@ -16,7 +16,7 @@ def validar_usuario(usuario):
 
 def validar_correo(correo):
     return re.fullmatch(
-        r"^(A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$",
+        r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$",
         correo
     ) is not None
 
